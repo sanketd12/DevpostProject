@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from twilio.rest import Client
 
 def fetch_weather_data(api_key, location):
-    """Fetches hourly weather forecast data from WeatherAPI.com."""
+    #gets hourly weather forecast data from WeatherAPI.com
     url = "http://api.weatherapi.com/v1/forecast.json"
     params = {
         'key': api_key,
@@ -18,7 +18,6 @@ def fetch_weather_data(api_key, location):
     return response.json()
 
 def extract_relevant_data(weather_data):
-    """Extracts relevant parameters for renewable energy predictions."""
     if 'forecast' not in weather_data or 'forecastday' not in weather_data['forecast']:
         return None
 
@@ -37,7 +36,6 @@ def extract_relevant_data(weather_data):
     return energy_data
 
 def analyze_energy_opportunities(energy_data):
-    """Analyzes weather data to recommend optimal periods for using renewable energy."""
     daily_recommendations = {}
     last_solar_time = None
     solar_period = []
@@ -67,7 +65,7 @@ def analyze_energy_opportunities(energy_data):
     if solar_period:
         append_period(daily_recommendations, day_key, solar_period)
 
-    # Ensure every day has a message, even if no optimal times were found
+    #make sure days w/ no optimal times of energy still have a msg
     for day in daily_recommendations:
         if not daily_recommendations[day]:
             daily_recommendations[day].append("No optimal times for renewable energy usage.")
@@ -102,7 +100,7 @@ def main():
     else:
         final_message = "No forecast data available."
 
-    # Twilio client setup to send SMS
+    #twilio msg setup
     client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
     client.messages.create(
         to=os.getenv('TO_NUMBER'),
